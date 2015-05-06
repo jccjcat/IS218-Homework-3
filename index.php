@@ -39,6 +39,13 @@
                 return $result;
             }
 
+            public function retrieveResults($query) {
+                $stmt = $this->connection->prepare($query);
+                $stmt->execute();
+                $result = $stmt->fetchAll();
+                return $result;
+            }
+
         }
 
         class Page {
@@ -91,28 +98,70 @@ INS;
                         $query = 'select first_name, last_name, max(salary) from (select first_name, last_name, salary from employees right join salaries on employees.emp_no=salaries.emp_no) as employeesalaries';
                         $result = $this->dbUtil->retrieveSingleResult($query);
                         echo '<h3>Task 1: Who is the highest paid employee?</h3>';
-                        echo '<p> The highest paid is '.$result['first_name'].' '.$result['last_name'].' with a salary of $'.$result['max(salary)'].'</p>';
+                        echo '<p> The highest paid is ' . $result['first_name'] . ' ' . $result['last_name'] . ' with a salary of $' . $result['max(salary)'] . '</p>';
                         break;
                     case 2:
+                        $query = 'select first_name, last_name, max(salary) from (select first_name, last_name, salary from employees right join salaries on employees.emp_no=salaries.emp_no where salaries.from_date between \'1981-01-01\' and \'1985-12-31\') as employeesalaries';
+                        $result = $this->dbUtil->retrieveSingleResult($query);
+                        echo '<h3>Task 2: Who is the highest paid employee between 1985 and 1981?</h3>';
+                        echo '<p> The highest paid is between 1985 and 1981 ' . $result['first_name'] . ' ' . $result['last_name'] . ' with a salary of $' . $result['max(salary)'] . '</p>';
                         break;
                     case 3:
+                        $query = 'select first_name, last_name, max(salary), dept_name from (select first_name, last_name, salary, dept_name from employees join dept_manager on employees.emp_no=dept_manager.emp_no join salaries on employees.emp_no=salaries.emp_no join departments on departments.dept_no=dept_manager.dept_no) as employeesalaries';
+                        $result = $this->dbUtil->retrieveSingleResult($query);
+                        echo '<h3>Task 3: Which department has the highest paid department head</h3>';
+                        //echo '<p> The highest paid is between 1985 and 1981 ' . $result['first_name'] . ' ' . $result['last_name'] . ' with a salary of $' . $result['max(salary)'] . '</p>';
+
+                        echo '<p>The department with the highest paid department head is ' . $result['dept_name'] . '.</p>';
                         break;
                     case 4:
+                        $query = 'select * from departments';
+                        $result = $this->dbUtil->retrieveResults($query);
+                        echo '<h3>Task 4: What are the titles of all the departments?</h3>';
+                        echo '<ul>';
+                        foreach ($result as $row) {
+                            echo '<li>' . $row['dept_name'] . '</li>';
+                        }
+                        echo '</ul>';
                         break;
                     case 5:
+                        $query = 'select first_name, last_name, dept_name, MAX(hire_date) as hire_date from (employees join dept_manager on dept_manager.emp_no=employees.emp_no join departments on dept_manager.dept_no=departments.dept_no) group by dept_name';
+                        $result = $this->dbUtil->retrieveResults($query);
+                        echo '<h3>Task 5: Who are the current department heads?</h3>';
+                        echo '<ul>';
+                        foreach ($result as $row) {
+                            echo '<li>' . $row['first_name'] . ' ' . $row['last_name'] . ' for ' . $row['dept_name'] . '</li>';
+                        }
+                        echo '</ul>';
                         break;
                     case 6:
+                        $query = 'select first_name, last_name, max(salary) from (select first_name, last_name, salary from employees right join salaries on employees.emp_no=salaries.emp_no where employees.emp_no not in (select emp_no from dept_manager)) as employeesalaries';
+                        $result = $this->dbUtil->retrieveSingleResult($query);
+                        echo '<h3>Task 6: Who is the highest paid employee that is not a department head?</h3>';
+                        echo '<p> The highest paid employee that is not a department head is ' . $result['first_name'] . ' ' . $result['last_name'] . ' with a salary of $' . $result['max(salary)'] . '</p>';
                         break;
                     case 7:
+                        $query = 'select first_name, last_name, min(salary) from (select first_name, last_name, salary from employees right join salaries on employees.emp_no=salaries.emp_no) as employeesalaries';
+                        $result = $this->dbUtil->retrieveSingleResult($query);
+                        echo '<h3>Task 7: Who is the lowest paid employee?</h3>';
+                        echo '<p> The lowest paid is ' . $result['first_name'] . ' ' . $result['last_name'] . ' with a salary of $' . $result['min(salary)'] . '</p>';
                         break;
                     case 8:
+                        $query = "select dept_name, count(emp_no) from departments left join dept_emp on dept_emp.dept_no=departments.dept_no where dept_emp.to_date='9999-01-01' group by departments.dept_no";
+                        $result = $this->dbUtil->retrieveResults($query);
+                        echo '<h3>Task 8:  How many employees currently work in each department?</h3>';
+                        echo '<ul>';
+                        foreach ($result as $row) {
+                            echo '<li>' . $row['dept_name'] . ' has ' . $row['count(emp_no)'] . ' employees </li>';
+                        }
+                        echo '</ul>';
                         break;
                     case 9:
                         break;
                     case 10:
                         break;
                 }
-                echo "<a href='".$_SERVER['PHP_SELF']."'>Return to Menu</a>";
+                echo "<a href='" . $_SERVER['PHP_SELF'] . "'>Return to Menu</a>";
             }
 
         }
