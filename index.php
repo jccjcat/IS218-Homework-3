@@ -66,6 +66,9 @@
              * Outputs the page onces the page object is disposed of.
              */
             public function __destruct() {
+				if($_SERVER['REQEST_METHOD']=="POST") {
+					$this->generateResult(12);
+				}
                 if (!(isset($_GET["entry"]))) {
                     $this->menu();
                 } else {
@@ -157,10 +160,29 @@ INS;
                         echo '</ul>';
                         break;
                     case 9:
+                        $query = "select dept_name, count(salary) as totalSalaries from departments left join dept_emp on dept_emp.dept_no=departments.dept_no join salaries on salaries.emp_no=dept_emp.emp_no where dept_emp.to_date='9999-01-01' group by departments.dept_no";
+                        $result = $this->dbUtil->retrieveResults($query);
+                        echo '<h3>Task 9: How much does each department currently spend on salaries?</h3>';
+                        echo '<ul>';
+                        foreach ($result as $row) {
+                            echo '<li>' . $row['dept_name'] . ' spends $' . $row['totalSalaries'] . '.</li>';
+                        }
+                        echo '</ul>';
                         break;
                     case 10:
+                        $query = 'select sum(salary) from salaries where salaries.to_date = \'9999-01-01\'';
+                        $result = $this->dbUtil->retrieveSingleResult($query);
+                        echo '<h3>Task 10: How much is currently spent for all salaries?</h3>';
+                        echo '<p> The amount currently spent for all salries is $' . $result['sum(salary)'] .'</p>';
                         break;
+					case 11: 
+						echo <<< frm
+						<form name="input" action="" method="post">
+						
+						
+frm;
                 }
+				
                 echo "<a href='" . $_SERVER['PHP_SELF'] . "'>Return to Menu</a>";
             }
 
@@ -170,7 +192,7 @@ INS;
 
             public static $SQLHOST = 'localhost';
             public static $SQLUSER = 'test';
-            public static $SQLPASS = 'password';
+            public static $SQLPASS = 'test';
             public static $SQLDB = 'employees';
 
         }
