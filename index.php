@@ -228,6 +228,7 @@ frm;
 						}
 						break;
 					case 13:
+						echo '<h3>Task: Modify Employee</h3>';
 						$query = "select * from employees limit 5";
                         $result = $this->dbUtil->retrieveResults($query);
 						echo '<table>';
@@ -238,6 +239,7 @@ frm;
 						echo '</table>';
 						break;
 					case 14:
+						echo '<h3>Task: Modify Employee</h3>';
 						$query = "select * from employees where emp_no=".$_GET["id"];
 						$row = $this->dbUtil->retrieveSingleResult($query);
 						echo <<< edt
@@ -254,6 +256,7 @@ frm;
 edt;
 						break;
 					case 15:
+						echo '<h3>Task: Modify Employee</h3>';
 						$en=$_POST['empno'];
 						$bd=$_POST['bday']; 
 						$fn=$_POST['fname']; 
