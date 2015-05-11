@@ -66,10 +66,10 @@
              * Outputs the page onces the page object is disposed of.
              */
             public function __destruct() {
-				if($_SERVER['REQEST_METHOD']=="POST") {
+				if(isset($_POST['submit'])) {
 					$this->generateResult(12);
 				}
-                if (!(isset($_GET["entry"]))) {
+                else if (!(isset($_GET["entry"]))) {
                     $this->menu();
                 } else {
                     $id = $_GET["entry"];
@@ -177,9 +177,16 @@ INS;
                         break;
 					case 11: 
 						echo <<< frm
+						<h3>Task: Add Employee</h3>
 						<form name="input" action="" method="post">
-						
-						
+						Employee Number: <input type="text" name="empno" value=""><br>
+						First Name: <input type="text" name="fname" value=""><br>
+						Last Name:" <input type="text" name="lname" value=""><br>
+						Birth Date: <input type="text" name="bday" value=""><br>						
+						Gender: <input type="text" name="gender" value="Male"><br>
+						Hire Date: <input type="text" name="hdate" value=""><br>
+						<input type="submit" value="Submit" name="submit">
+						</form> 						
 frm;
                 }
 				
